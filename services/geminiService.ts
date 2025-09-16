@@ -76,7 +76,7 @@ export async function generateQuizQuestions(): Promise<QuizQuestion[]> {
       },
     });
 
-    const jsonText = response.text.trim();
+    const jsonText = (response.text || '').trim();
     const generatedQuestions = JSON.parse(jsonText) as QuizQuestion[];
 
     if (!Array.isArray(generatedQuestions) || generatedQuestions.length < 2) {
