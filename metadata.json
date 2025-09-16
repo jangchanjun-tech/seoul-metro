@@ -1,0 +1,5 @@
+{
+  "name": "Seoul Metro AI Situational Judgment Test",
+  "description": "An AI-powered application that generates realistic situational judgment test questions based on Seoul Metro's internal data to diagnose competency. Users are presented with scenarios and must choose the most appropriate actions.",
+  "requestFramePermissions": []
+}
