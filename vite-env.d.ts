@@ -2,11 +2,14 @@
 // The project does not use Vite-specific client types, so this change is safe.
 // /// <reference types="vite/client" />
 
-// Declares the global `process` object to satisfy the TypeScript compiler.
-// This resolves the `TS2580: Cannot find name 'process'` error during the `tsc` pre-build check.
-// The actual value of `process.env.API_KEY` is injected during the Vite build via `vite.config.ts`.
-declare const process: {
-  env: {
+// The actual value of `process.env.API_KEY` is injected during the Vite build.
+// See `vite.config.ts` for details.
+
+// FIX: Replaced `declare const process` with an augmentation of `NodeJS.ProcessEnv`.
+// This resolves the "Cannot redeclare block-scoped variable 'process'" error (TS2451) by
+// merging our type with the existing global `process` type instead of redeclaring it.
+declare namespace NodeJS {
+  interface ProcessEnv {
     API_KEY: string;
-  };
-};
+  }
+}
