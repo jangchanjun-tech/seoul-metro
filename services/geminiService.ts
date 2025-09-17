@@ -11,14 +11,10 @@ function getAiClient(): GoogleGenAI {
         return ai;
     }
 
-    // `import.meta.env` is a Vite-specific feature. Optional chaining `?.` is used
-    // to prevent a TypeError if `import.meta.env` itself is undefined.
-    const apiKey = import.meta.env?.VITE_API_KEY;
+    const apiKey = process.env.API_KEY;
 
-    // Vite replaces missing env vars with `undefined` during build.
-    // This check catches that and provides a clear, actionable error.
     if (!apiKey) {
-      throw new Error("VITE_API_KEY is not defined. Please check your environment variables. If deploying on Vercel, ensure it's set in the project settings and that the latest deployment has completed.");
+      throw new Error("API_KEY is not defined. Please check your environment variables.");
     }
 
     ai = new GoogleGenAI({ apiKey });
