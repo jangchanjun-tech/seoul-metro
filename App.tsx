@@ -23,7 +23,12 @@ const App: React.FC = () => {
             setScreen(AppScreen.QUIZ);
         } catch (error) {
             console.error("AI 문제 생성 실패:", error);
-            alert("AI 실시간 문제 생성에 실패했습니다. 네트워크 또는 API 설정 문제일 수 있습니다. 잠시 후 다시 시도해 주세요.");
+            // Provide a more specific error message if the API key is missing.
+            if (error instanceof Error && error.message.includes('VITE_API_KEY')) {
+                 alert("AI 서비스 설정 오류: API 키가 누락되었습니다. 애플리케이션 환경 변수(VITE_API_KEY)가 올바르게 설정되었는지 확인해주세요.");
+            } else {
+                 alert("AI 실시간 문제 생성에 실패했습니다. 네트워크 또는 API 설정 문제일 수 있습니다. 잠시 후 다시 시도해 주세요.");
+            }
             setScreen(AppScreen.START);
         }
     }, []);

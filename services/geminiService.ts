@@ -1,9 +1,30 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { QuizQuestion } from '../types';
 
-// Per @google/genai guidelines, the API key must be obtained from process.env.API_KEY.
-// This environment variable is assumed to be pre-configured in the execution context.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let ai: GoogleGenAI | null = null;
+
+// Lazily initialize the AI client to defer the API key check until it's needed.
+// This prevents a module-level crash if the key is missing and allows for
+// graceful error handling in the UI.
+function getAiClient(): GoogleGenAI {
+    if (ai) {
+        return ai;
+    }
+
+    // `import.meta.env` is a Vite-specific feature. Optional chaining `?.` is used
+    // to prevent a TypeError if `import.meta.env` itself is undefined.
+    const apiKey = import.meta.env?.VITE_API_KEY;
+
+    // Vite replaces missing env vars with `undefined` during build.
+    // This check catches that and provides a clear, actionable error.
+    if (!apiKey) {
+      throw new Error("VITE_API_KEY is not defined. Please check your environment variables. If deploying on Vercel, ensure it's set in the project settings and that the latest deployment has completed.");
+    }
+
+    ai = new GoogleGenAI({ apiKey });
+    return ai;
+}
+
 
 export async function generateQuizQuestions(): Promise<QuizQuestion[]> {
   const prompt = `
@@ -66,7 +87,8 @@ export async function generateQuizQuestions(): Promise<QuizQuestion[]> {
   };
 
   try {
-    const response = await ai.models.generateContent({
+    const geminiClient = getAiClient(); // This will throw if key is missing
+    const response = await geminiClient.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
